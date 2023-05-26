@@ -24,10 +24,14 @@ namespace WebApp1.Controllers
             var users = _context.Users.ToList();
             return View(users);
         }
+
+
+
         [HttpGet]
         public IActionResult UploadFile()
         {
-            return View();
+            var model = new UploadFileViewModel();
+            return View(model);
         }
 
         [HttpPost]
@@ -53,16 +57,49 @@ namespace WebApp1.Controllers
 
                         var values = line.Split(',');
 
-                        var adduser = new User
+                        var name = values[0];
+                        var dateOfBirthString = values[1];
+                        var marriedString = values[2];
+                        var phone = values[3];
+                        var salaryString = values[4];
+
+                        if (string.IsNullOrEmpty(name) || name.Length <= 3)
                         {
-                            Name = values[0],
-                            DateOfBirth = ParseDate(values[1]),
-                            Married = bool.Parse(values[2]),
-                            Phone = values[3],
-                            Salary = decimal.Parse(values[4])
+                            var model = new UploadFileViewModel { ErrorMessage = "The file has a name shorter than 3 letters" };
+                            return View("UploadFile", model);
+                        }
+
+                        var dateOfBirth = ParseDate(dateOfBirthString);
+
+                        bool married;
+                        if (string.IsNullOrEmpty(marriedString) || !bool.TryParse(marriedString, out married))
+                        {
+                            married = false; 
+                        }
+
+                        if (string.IsNullOrEmpty(phone))
+                        {
+                            var model = new UploadFileViewModel { ErrorMessage = "Missed phone number" };
+                            return View("UploadFile", model);
+                        }
+
+                        decimal salary;
+                        if (string.IsNullOrEmpty(salaryString) || !decimal.TryParse(salaryString, out salary))
+                        {
+                            var model = new UploadFileViewModel { ErrorMessage = "The salary is not specified or the format is incorrect" };
+                            return View("UploadFile", model);
+                        }
+
+                        var addUser = new User
+                        {
+                            Name = name,
+                            DateOfBirth = dateOfBirth,
+                            Married = married,
+                            Phone = phone,
+                            Salary = salary
                         };
 
-                        users.Add(adduser);
+                        users.Add(addUser);
                     }
                 }
 
@@ -73,11 +110,20 @@ namespace WebApp1.Controllers
             return RedirectToAction("UserList");
         }
 
+
         private DateTime ParseDate(string dateString)
         {
+            if (string.IsNullOrEmpty(dateString))
+            {
+                return new DateTime(1, 1, 1); 
+            }
+
             var formattedDateString = dateString.Replace('.', '-');
             return DateTime.Parse(formattedDateString);
         }
+
+
+
         public IActionResult UserList()
         {
             var users = _context.Users.ToList();
@@ -112,31 +158,31 @@ namespace WebApp1.Controllers
             return View(user);
         }
         [HttpGet]
-public IActionResult Delete(int id)
-{
-    var user = _context.Users.Find(id);
-    if (user == null)
-    {
-        return NotFound();
-    }
+        public IActionResult Delete(int id)
+        {
+            var user = _context.Users.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-    return View(user);
-}
+            return View(user);
+        }
 
-[HttpPost]
-public async Task<IActionResult> DeleteConfirmed(int id)
-{
-    var user = await _context.Users.FindAsync(id);
-    if (user == null)
-    {
-        return NotFound();
-    }
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-    _context.Users.Remove(user);
-    await _context.SaveChangesAsync();
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
 
-    return RedirectToAction("UserList");
-}
+            return RedirectToAction("UserList");
+        }
 
 
     }

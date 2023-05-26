@@ -1,5 +1,16 @@
-﻿@using (Html.BeginForm("UploadFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+﻿@model WebApp1.Models.UploadFileViewModel
+
+@using (Html.BeginForm("UploadFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input type="file" name="file" />
     <input type="submit" value="Upload" />
 }
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<h4>Example format:</h4>
+<p>Name,DateOfBirth,Married,Phone,Salary</p>
+<p>Name,2001-08-30,false,+38000000000,000.00</p>

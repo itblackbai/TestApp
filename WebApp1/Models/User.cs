@@ -10,7 +10,7 @@ namespace WebApp1.Models
         public int Id { get; set; }
 
         [Required]
-        [MinLength(3, ErrorMessage = "Name must have at least 3 letters")]
+        [MinLength(3, ErrorMessage = "Name must have 3 or more letters")]
         public string Name { get; set; }
 
         [Required]
@@ -19,8 +19,8 @@ namespace WebApp1.Models
 
         [Required]
         public bool Married { get; set; }
-        [MinLength(13, ErrorMessage = "Phone number must have 13 number and have format '+3800000000000'")]
-        [MaxLength(13, ErrorMessage = "Phone number must have 13 number and have format '+3800000000000'")]
+        [MinLength(13, ErrorMessage = "Phone number must have 13 numbers '+3800000000000'")]
+        [MaxLength(13, ErrorMessage = "Phone number must have 13 numbers'+3800000000000'")]
         public string Phone { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
