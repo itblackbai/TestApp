@@ -1,0 +1,179 @@
+﻿
+@model List<User>
+
+<h2>User List</h2>
+
+<div>
+    <label for="filterField">Filter Field:</label>
+    <select id="filterField">
+        <option value="0">Name</option>
+        <option value="1">Date of Birth</option>
+        <option value="2">Married</option>
+        <option value="3">Phone</option>
+    </select>
+</div>
+
+<div>
+    <label for="filterValue">Filter Value:</label>
+    <input type="text" id="filterValue" />
+</div>
+
+<button onclick="resetFilter()">Reset Filter</button>
+
+<table id="userTable" class="table">
+    <thead>
+        <tr>
+            <th><div onclick="sortTable(0)">Name</div></th>
+            <th><div onclick="sortTable(1)">Date of Birth</div></th>
+            <th><div onclick="sortTable(2)">Married</div></th>
+            <th><div onclick="sortTable(3)">Phone</div></th>
+            <th><div onclick="sortTable(4)">Salary</div></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    <div>@user.Name</div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="@user.Id" />
+                            <input asp-for="@user.Name" class="form-control" />
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div>@user.DateOfBirth.ToString("yyyy-MM-dd")</div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="@user.Id" />
+                            <input asp-for="@user.DateOfBirth" class="form-control" />
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div>@user.Married</div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="@user.Id" />
+                            <select asp-for="@user.Married" class="form-control">
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div>@user.Phone</div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="@user.Id" />
+                            <input asp-for="@user.Phone" class="form-control" />
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div>@user.Salary</div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="@user.Id" />
+                            <input asp-for="@user.Salary" class="form-control" />
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div class="edit-actions">
+                        <a class="edit-link" href="@Url.Action("Edit", new { id = user.Id })">Edit</a>
+                        <a class="delete-link" href="@Url.Action("Delete", new { id = user.Id })">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function sortTable(field) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("userTable");
+        switching = true;
+
+        while (switching) {
+            switching = false;
+            rows = Array.from(table.getElementsByTagName("tr"));
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[field];
+                y = rows[i + 1].getElementsByTagName("td")[field];
+
+                var xValue = x.innerHTML.toLowerCase();
+                var yValue = y.innerHTML.toLowerCase();
+
+                if (xValue > yValue) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    function resetFilter() {
+        var table, rows, i;
+        table = document.getElementById("userTable");
+        rows = Array.from(table.getElementsByTagName("tr"));
+
+        for (i = 1; i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var filterField = document.getElementById("filterField");
+        var filterValue = document.getElementById("filterValue");
+
+        filterField.addEventListener("change", applyFilter);
+        filterValue.addEventListener("input", applyFilter);
+
+        function applyFilter() {
+            var table, rows, i;
+            table = document.getElementById("userTable");
+            rows = Array.from(table.getElementsByTagName("tr"));
+
+            var fieldIndex = filterField.value;
+            var filterText = filterValue.value.toLowerCase();
+
+            for (i = 1; i < rows.length; i++) {
+                var cell = rows[i].getElementsByTagName("td")[fieldIndex];
+                var cellText = cell.innerText.toLowerCase();
+
+                if (cellText.indexOf(filterText) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        var headers = Array.from(document.querySelectorAll("th div"));
+        headers.forEach(function (header, index) {
+            header.addEventListener("click", function () {
+                sortTable(index);
+            });
+            header.style.cursor = "pointer";
+        });
+    });
+</script>
+
+<style>
+    .desc::after {
+        content: " ▼";
+    }
+</style>

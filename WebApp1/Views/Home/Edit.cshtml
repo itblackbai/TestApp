@@ -1,0 +1,45 @@
+﻿@model User
+
+<h2>Edit User</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Date of Birth</label>
+        <input asp-for="DateOfBirth" class="form-control" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Married</label>
+        <select asp-for="Married" class="form-control">
+            <option value="true">Married</option>
+            <option value="false">Single</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Phone</label>
+        <input asp-for="Phone" id="phoneInput" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Salary</label>
+        <input asp-for="Salary" id="salaryInput" class="form-control" />
+        <span asp-validation-for="Salary" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="@Url.Action("UserList")" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('salaryInput').addEventListener('input', function (e) {
+            var salaryInput = e.target;
+            var formattedValue = salaryInput.value.replace('.', ',');
+            salaryInput.value = formattedValue;
+        });
+    </script>
+}

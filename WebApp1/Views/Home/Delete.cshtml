@@ -1,0 +1,18 @@
+﻿@model User
+
+<h2>Delete User</h2>
+
+<div>
+    <h4>Are you sure you want to delete this user?</h4>
+    <div>
+        <h5>Name: @Model.Name</h5>
+        <h5>Date of Birth: @Model.DateOfBirth.ToString("yyyy-MM-dd")</h5>
+        <h5>Married: @Model.Married</h5>
+        <h5>Phone: @Model.Phone</h5>
+        <h5>Salary: @Model.Salary</h5>
+    </div>
+    <form method="post" asp-action="DeleteConfirmed" asp-route-id="@Model.Id">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="@Url.Action("UserList")" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
